@@ -1,0 +1,57 @@
+{
+  "name": "Email Triage",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [ { "field": "minutes", "minutesInterval": 30 } ] }
+      },
+      "id": "trigger-cron",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "getAll",
+        "limit": 5,
+        "q": "is:unread is:important"
+      },
+      "id": "get-emails",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [200, 0],
+      "credentials": { "gmailOAuth2": { "id": "5", "name": "Gmail" } }
+    },
+    {
+      "parameters": {
+        "model": "gemini-2.5-flash",
+        "prompt": "Fasse die folgenden E-Mails zusammen und bewerte ihre Priorität (Hoch/Mittel/Niedrig). Nutze die Persona der Kybernetischen Kameradin.\n\nE-Mails:\n{{ $json }}"
+      },
+      "id": "summarize-emails",
+      "name": "LLM Summary",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1,
+      "position": [400, 0]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_USER_ID }}",
+        "text": "={{ $json.text }}"
+      },
+      "id": "send-summary",
+      "name": "Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [600, 0],
+      "credentials": { "telegramApi": { "id": "1", "name": "Telegram account" } }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": { "main": [ [ { "node": "Gmail", "type": "main", "index": 0 } ] ] },
+    "Gmail": { "main": [ [ { "node": "LLM Summary", "type": "main", "index": 0 } ] ] },
+    "LLM Summary": { "main": [ [ { "node": "Telegram", "type": "main", "index": 0 } ] ] }
+  }
+}

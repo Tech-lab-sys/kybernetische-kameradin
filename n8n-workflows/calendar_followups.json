@@ -1,0 +1,46 @@
+{
+  "name": "Calendar Follow-ups",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": { "item": [ { "mode": "everyMinute" } ] },
+        "calendar": "primary",
+        "triggerOn": "eventStarting",
+        "timeBefore": 15
+      },
+      "id": "trigger-calendar",
+      "name": "Google Calendar Trigger",
+      "type": "n8n-nodes-base.googleCalendarTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "credentials": { "googleCalendarOAuth2Api": { "id": "3", "name": "Google Calendar" } }
+    },
+    {
+      "parameters": {
+        "model": "gemini-2.5-flash",
+        "prompt": "Generiere eine flirtende, motivierende Erinnerung für den folgenden Termin, der in 15 Minuten beginnt: {{ $json.summary }}."
+      },
+      "id": "generate-reminder",
+      "name": "LLM Reminder",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1,
+      "position": [200, 0]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_USER_ID }}",
+        "text": "={{ $json.text }}"
+      },
+      "id": "send-reminder",
+      "name": "Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [400, 0],
+      "credentials": { "telegramApi": { "id": "1", "name": "Telegram account" } }
+    }
+  ],
+  "connections": {
+    "Google Calendar Trigger": { "main": [ [ { "node": "LLM Reminder", "type": "main", "index": 0 } ] ] },
+    "LLM Reminder": { "main": [ [ { "node": "Telegram", "type": "main", "index": 0 } ] ] }
+  }
+}

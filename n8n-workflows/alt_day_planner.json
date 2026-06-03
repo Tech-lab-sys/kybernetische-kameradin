@@ -1,0 +1,66 @@
+{
+  "name": "Alternative Day Planner",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": ["message"]
+      },
+      "id": "trigger-telegram",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "credentials": { "telegramApi": { "id": "1", "name": "Telegram account" } }
+    },
+    {
+      "parameters": {
+        "conditions": { "string": [ { "value1": "={{ $json.message.text }}", "value2": "/alternative_tag" } ] }
+      },
+      "id": "check-command",
+      "name": "IF Command",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [200, 0]
+    },
+    {
+      "parameters": {
+        "url": "https://example-events-api.com/events?location=Berlin",
+        "options": {}
+      },
+      "id": "get-events",
+      "name": "HTTP Request Events",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [400, -100]
+    },
+    {
+      "parameters": {
+        "model": "gemini-2.5-flash",
+        "prompt": "Bewerte diese Events basierend auf Relevanz für einen entspannten Tag und schlage 3 Alternativen vor. Nutze die Persona der Kybernetischen Kameradin.\nEvents: {{ $json }}"
+      },
+      "id": "llm-score",
+      "name": "LLM Event Scoring",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1,
+      "position": [600, -100]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.text }}"
+      },
+      "id": "send-alternatives",
+      "name": "Telegram Output",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [800, -100],
+      "credentials": { "telegramApi": { "id": "1", "name": "Telegram account" } }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": { "main": [ [ { "node": "IF Command", "type": "main", "index": 0 } ] ] },
+    "IF Command": { "main": [ [ { "node": "HTTP Request Events", "type": "main", "index": 0 } ] ] },
+    "HTTP Request Events": { "main": [ [ { "node": "LLM Event Scoring", "type": "main", "index": 0 } ] ] },
+    "LLM Event Scoring": { "main": [ [ { "node": "Telegram Output", "type": "main", "index": 0 } ] ] }
+  }
+}

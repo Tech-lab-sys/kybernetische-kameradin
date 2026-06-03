@@ -1,0 +1,28 @@
+{
+  "name": "Sub Workflow Google Tasks Creator",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "execute-workflow-trigger",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "task": "@all",
+        "title": "={{ $json.task_title }}"
+      },
+      "id": "create-task",
+      "name": "Google Tasks",
+      "type": "n8n-nodes-base.googleTasks",
+      "typeVersion": 1,
+      "position": [200, 0],
+      "credentials": { "googleTasksOAuth2Api": { "id": "7", "name": "Google Tasks" } }
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": { "main": [ [ { "node": "Google Tasks", "type": "main", "index": 0 } ] ] }
+  }
+}
