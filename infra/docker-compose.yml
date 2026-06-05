@@ -56,7 +56,8 @@ services:
       EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS: true
       N8N_LOG_LEVEL: info
     ports:
-      - "5678:5678"
+      # SECURE: Bind only to localhost to force traffic through the Cloudflared tunnel
+      - "127.0.0.1:5678:5678"
     volumes:
       - n8n_data:/home/node/.n8n
     networks:
