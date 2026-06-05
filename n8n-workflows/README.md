@@ -213,6 +213,7 @@ Wenn du planst oder Ziele verfolgst, beziehe immer die persönlichen Fortschritt
 2. ⬜ Credentials konfigurieren
 3. ⬜ Persona-Prompt anpassen
 4. ⬜ Fehlende Workflows erstellen (Perfect Day, Proactive Check-in, etc.)
+   - ✅ E-Mail Triage (`email_triage.json`)
 5. ⬜ Goal Ledger in Google Sheets anlegen
 6. ⬜ Leonardo AI Character Reference erstellen
 7. ⬜ ElevenLabs deutsche Stimme testen
