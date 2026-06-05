@@ -1,0 +1,28 @@
+{
+  "name": "Sub Workflow Translate",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "execute-workflow-trigger",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "prompt": "Übersetze folgenden Text in die Sprache '{{ $json.target_language }}'. Antworte NUR mit der Übersetzung.\nText: {{ $json.text }}"
+      },
+      "id": "llm-translate",
+      "name": "LLM Translate",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1,
+      "position": [200, 0],
+      "credentials": { "openAiApi": { "id": "6", "name": "OpenAI account" } }
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": { "main": [ [ { "node": "LLM Translate", "type": "main", "index": 0 } ] ] }
+  }
+}

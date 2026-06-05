@@ -1,0 +1,71 @@
+{
+  "name": "CRM Follow-ups",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [ { "field": "hours", "hoursInterval": 1 } ] }
+      },
+      "id": "trigger-cron",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": "={{ $env.CRM_SHEET_ID }}",
+        "sheetName": "FollowUps",
+        "range": "A:E"
+      },
+      "id": "get-crm",
+      "name": "Google Sheets CRM",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [200, 0],
+      "credentials": { "googleSheetsOAuth2Api": { "id": "4", "name": "Google Sheets" } }
+    },
+    {
+      "parameters": {
+        "conditions": { "string": [ { "value1": "={{ $json.Status }}", "value2": "No Reply > 24h" } ] }
+      },
+      "id": "filter-crm",
+      "name": "IF No Reply",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [400, 0]
+    },
+    {
+      "parameters": {
+        "model": "gemini-2.5-flash",
+        "prompt": "Generiere eine professionelle, aber freundliche Follow-up E-Mail für {{ $json.Name }} bezüglich {{ $json.Thema }}."
+      },
+      "id": "generate-email",
+      "name": "LLM Email",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1,
+      "position": [600, -100]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "to": "={{ $('IF No Reply').item.json.Email }}",
+        "subject": "Follow-up: {{ $('IF No Reply').item.json.Thema }}",
+        "message": "={{ $json.text }}"
+      },
+      "id": "send-email",
+      "name": "Gmail Send",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [800, -100],
+      "credentials": { "gmailOAuth2": { "id": "5", "name": "Gmail" } }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": { "main": [ [ { "node": "Google Sheets CRM", "type": "main", "index": 0 } ] ] },
+    "Google Sheets CRM": { "main": [ [ { "node": "IF No Reply", "type": "main", "index": 0 } ] ] },
+    "IF No Reply": { "main": [ [ { "node": "LLM Email", "type": "main", "index": 0 } ] ] },
+    "LLM Email": { "main": [ [ { "node": "Gmail Send", "type": "main", "index": 0 } ] ] }
+  }
+}

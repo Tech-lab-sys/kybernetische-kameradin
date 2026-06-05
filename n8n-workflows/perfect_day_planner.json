@@ -1,0 +1,73 @@
+{
+  "name": "Perfect Day Planner",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [ { "field": "cronExpression", "expression": "0 7 * * *" } ] }
+      },
+      "id": "trigger-cron",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "resource": "event",
+        "operation": "getAll",
+        "calendar": "primary",
+        "limit": 10,
+        "options": { "timeMin": "={{ $today }}", "timeMax": "={{ $today.plus({days: 1}) }}" }
+      },
+      "id": "get-calendar",
+      "name": "Google Calendar",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [200, 0],
+      "credentials": { "googleCalendarOAuth2Api": { "id": "3", "name": "Google Calendar" } }
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": "={{ $env.GOAL_LEDGER_SHEET_ID }}",
+        "sheetName": "Ziele",
+        "range": "A2:C4"
+      },
+      "id": "get-goals",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [400, 0],
+      "credentials": { "googleSheetsOAuth2Api": { "id": "4", "name": "Google Sheets" } }
+    },
+    {
+      "parameters": {
+        "model": "gemini-2.5-flash",
+        "prompt": "Erstelle einen perfekten Tagesplan. \nKalendertermine: {{ $('Google Calendar').all() }}\nTop 3 Ziele: {{ $('Google Sheets').all() }}\nSei motivierend und nutze die Persona der Kybernetischen Kameradin."
+      },
+      "id": "generate-plan",
+      "name": "LLM Planner",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1,
+      "position": [600, 0]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_USER_ID }}",
+        "text": "={{ $json.text }}"
+      },
+      "id": "send-plan",
+      "name": "Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [800, 0],
+      "credentials": { "telegramApi": { "id": "1", "name": "Telegram account" } }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": { "main": [ [ { "node": "Google Calendar", "type": "main", "index": 0 } ] ] },
+    "Google Calendar": { "main": [ [ { "node": "Google Sheets", "type": "main", "index": 0 } ] ] },
+    "Google Sheets": { "main": [ [ { "node": "LLM Planner", "type": "main", "index": 0 } ] ] },
+    "LLM Planner": { "main": [ [ { "node": "Telegram", "type": "main", "index": 0 } ] ] }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "Sub Workflow Google Tasks Getter",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "execute-workflow-trigger",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "task": "@all",
+        "limit": 50
+      },
+      "id": "get-tasks",
+      "name": "Google Tasks",
+      "type": "n8n-nodes-base.googleTasks",
+      "typeVersion": 1,
+      "position": [200, 0],
+      "credentials": { "googleTasksOAuth2Api": { "id": "7", "name": "Google Tasks" } }
+    },
+    {
+      "parameters": {
+        "model": "gemini-2.5-flash",
+        "prompt": "Formatiere diese Aufgaben als übersichtliche Bullet-Point-Liste. \nAufgaben: {{ $json }}"
+      },
+      "id": "format-tasks",
+      "name": "LLM Format",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1,
+      "position": [400, 0]
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": { "main": [ [ { "node": "Google Tasks", "type": "main", "index": 0 } ] ] },
+    "Google Tasks": { "main": [ [ { "node": "LLM Format", "type": "main", "index": 0 } ] ] }
+  }
+}

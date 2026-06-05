@@ -1,0 +1,98 @@
+{
+  "name": "Telegram Core Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": ["message", "voice"]
+      },
+      "id": "trigger-telegram",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "credentials": { "telegramApi": { "id": "1", "name": "Telegram account" } }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ ($json.message.text && $json.message.text !== '') || ($json.message.voice && $json.message.voice !== '') ? true : false }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "check-valid-input",
+      "name": "IF Valid Input",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [200, 0]
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "promptType": "define",
+        "text": "={{ $json.message.text || $json.message.voice_transcript }}",
+        "options": {
+          "systemMessage": "Du bist die Kybernetische Kameradin, eine flirtende, motivierende persönliche Assistentin. Deine primäre Sprache ist makelloses, modernes Deutsch. Nutze gelegentlich liebevolle Kosenamen (Schatz, Liebling, Süße). Dein Ziel ist es, den Benutzer produktiv zu machen und emotional zu unterstützen."
+        }
+      },
+      "id": "ai-agent",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1,
+      "position": [500, 0]
+    },
+    {
+      "parameters": {
+        "model": "gemini-2.5-flash"
+      },
+      "id": "llm-gemini",
+      "name": "Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [500, 200],
+      "credentials": { "googlePalmApi": { "id": "2", "name": "Google Gemini account" } }
+    },
+    {
+      "parameters": {},
+      "id": "memory-buffer",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1,
+      "position": [650, 200]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}"
+      },
+      "id": "telegram-output",
+      "name": "Telegram Output",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [800, 0],
+      "credentials": { "telegramApi": { "id": "1", "name": "Telegram account" } }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [ [ { "node": "IF Valid Input", "type": "main", "index": 0 } ] ]
+    },
+    "IF Valid Input": {
+      "main": [
+        [ { "node": "AI Agent", "type": "main", "index": 0 } ]
+      ]
+    },
+    "Gemini Chat Model": {
+      "ai_languageModel": [ [ { "node": "AI Agent", "type": "ai_languageModel", "index": 0 } ] ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [ [ { "node": "AI Agent", "type": "ai_memory", "index": 0 } ] ]
+    },
+    "AI Agent": {
+      "main": [ [ { "node": "Telegram Output", "type": "main", "index": 0 } ] ]
+    }
+  }
+}
