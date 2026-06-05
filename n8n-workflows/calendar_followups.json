@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "pollTimes": { "item": [ { "mode": "everyMinute" } ] },
+        "pollTimes": { "item": [ { "mode": "every15Minutes" } ] },
         "calendar": "primary",
         "triggerOn": "eventStarting",
         "timeBefore": 15
