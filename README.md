@@ -118,7 +118,7 @@ kybernetische-kameradin/
 - [x] **Google Workspace** - Gmail, Calendar, Tasks Integration
 - [ ] **Perfect Day Planner** - KI-generierte Tagespläne (WIP)
 - [ ] **Proactive Check-ins** - Zufällige werktägliche Motivation (WIP)
-- [ ] **E-Mail Triage** - Auto-Priorisierung (WIP)
+- [x] **E-Mail Triage** - Auto-Priorisierung (WIP)
 - [ ] **CRM Follow-ups** - Automatische Follow-up-Mails (WIP)
 
 ### 🛠️ Technischer Stack

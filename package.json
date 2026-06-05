@@ -1,0 +1,24 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "**Proaktiver, multimodaler KI-Assistent auf Raspberry Pi 5 mit n8n**",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest tests/n8n.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tech-lab-sys/kybernetische-kameradin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Tech-lab-sys/kybernetische-kameradin/issues"
+  },
+  "homepage": "https://github.com/Tech-lab-sys/kybernetische-kameradin#readme",
+  "devDependencies": {
+    "jest": "^30.4.2"
+  }
+}
