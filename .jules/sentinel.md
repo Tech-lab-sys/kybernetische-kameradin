@@ -1,0 +1,4 @@
+## 2026-06-06 - [Port Binding Vulnerability in Docker Compose]
+**Vulnerability:** The n8n port in `infra/docker-compose.yml` was bound to `0.0.0.0` (`"5678:5678"`), which exposes the service directly to the internet bypassing local firewalls like UFW if not properly configured, despite the intention to route traffic exclusively through a Cloudflared Tunnel.
+**Learning:** Docker bypasses standard iptables rules (like UFW) when publishing ports. A port mapping like `"5678:5678"` automatically binds to all network interfaces (`0.0.0.0`), inadvertently exposing internal services publicly if the machine has a public IP, even if a reverse proxy or tunnel is intended to be the sole entry point.
+**Prevention:** Always bind exposed ports to localhost (`127.0.0.1`) when the service should only be accessible locally or via a reverse proxy/tunnel running on the same host. Example: `"127.0.0.1:5678:5678"`.
