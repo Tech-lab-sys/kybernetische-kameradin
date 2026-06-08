@@ -1,0 +1,4 @@
+## 2026-06-08 - Direct Port Exposure Vulnerability in Tunnel Architecture
+**Vulnerability:** The n8n service exposed port 5678 globally (`"5678:5678"`) in `docker-compose.yml`, despite the architecture relying on a Cloudflare Tunnel for secure, external access.
+**Learning:** Exposing ports directly via Docker bypasses network-level access controls (like the Cloudflare Tunnel), potentially allowing direct external access if the host machine's firewall is not configured securely. This is a common architectural gap in edge computing setups.
+**Prevention:** In architectures using local tunnels (like cloudflared or ngrok), all container ports should be explicitly bound to `127.0.0.1` (e.g., `127.0.0.1:5678:5678`) to ensure services are only accessible locally or via the designated tunnel.
