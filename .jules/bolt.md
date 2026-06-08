@@ -1,0 +1,3 @@
+## 2024-05-24 - Minimize n8n DB I/O on Raspberry Pi 5
+**Learning:** Saving execution data for successful n8n runs causes significant unnecessary PostgreSQL I/O and disk space usage, which acts as a major performance bottleneck on resource-constrained devices like the Raspberry Pi 5.
+**Action:** Always set `EXECUTIONS_DATA_SAVE_ON_SUCCESS: none` in `docker-compose.yml` for n8n deployments on Raspberry Pi to eliminate this bottleneck.
