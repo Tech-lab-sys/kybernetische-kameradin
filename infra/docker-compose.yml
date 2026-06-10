@@ -55,8 +55,9 @@ services:
       EXECUTIONS_DATA_SAVE_ON_SUCCESS: all
       EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS: true
       N8N_LOG_LEVEL: info
+    # SECURITY: Bind to localhost to prevent direct external exposure and enforce Cloudflared tunnel routing
     ports:
-      - "5678:5678"
+      - "127.0.0.1:5678:5678"
     volumes:
       - n8n_data:/home/node/.n8n
     networks:
