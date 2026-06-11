@@ -52,7 +52,9 @@ services:
       
       # Execution & Logging
       EXECUTIONS_DATA_SAVE_ON_ERROR: all
-      EXECUTIONS_DATA_SAVE_ON_SUCCESS: all
+      # ⚡ Bolt Optimization: Disable saving successful execution data to minimize
+      # PostgreSQL database I/O and disk space usage on the resource-constrained Raspberry Pi 5.
+      EXECUTIONS_DATA_SAVE_ON_SUCCESS: none
       EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS: true
       N8N_LOG_LEVEL: info
     ports:

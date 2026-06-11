@@ -1,0 +1,3 @@
+## 2024-05-24 - [n8n Execution Data Storage Optimization]
+**Learning:** n8n saves all execution data by default (`EXECUTIONS_DATA_SAVE_ON_SUCCESS: all`), which includes input and output data for every node. On a resource-constrained device like a Raspberry Pi 5 using an SD card or even a slow SSD, this causes excessive PostgreSQL database I/O, rapid disk space consumption, and potential SD card degradation, especially for workflows running frequently (e.g., hourly check-ins).
+**Action:** Always set `EXECUTIONS_DATA_SAVE_ON_SUCCESS: none` in the n8n Docker Compose configuration for Edge/IoT deployments unless successful execution data is strictly required for auditing. Keep `EXECUTIONS_DATA_SAVE_ON_ERROR: all` for debugging failures.
