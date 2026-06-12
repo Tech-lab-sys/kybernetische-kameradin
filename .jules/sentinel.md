@@ -1,0 +1,4 @@
+## 2024-06-12 - Prevent Docker Port Exposure & n8n Data Leakage
+**Vulnerability:** n8n was binding its port globally (`"5678:5678"`) instead of to localhost, and saving execution data on success (`EXECUTIONS_DATA_SAVE_ON_SUCCESS: all`) in `infra/docker-compose.yml`.
+**Learning:** This could allow bypassing the Cloudflare tunnel if the server port was exposed, and saving all execution data writes sensitive PII/secrets to the PostgreSQL DB, which is a security risk and causes unneeded disk IO on the Raspberry Pi.
+**Prevention:** Always bind docker ports to `127.0.0.1` (`"127.0.0.1:5678:5678"`) when using a reverse proxy/tunnel, and configure n8n to `EXECUTIONS_DATA_SAVE_ON_SUCCESS: none` in production to prevent leaking sensitive variables into logs/DB.
