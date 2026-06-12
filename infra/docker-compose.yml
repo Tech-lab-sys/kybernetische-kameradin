@@ -52,7 +52,8 @@ services:
       
       # Execution & Logging
       EXECUTIONS_DATA_SAVE_ON_ERROR: all
-      EXECUTIONS_DATA_SAVE_ON_SUCCESS: all
+      # Performance optimization: Reduces PostgreSQL database I/O and disk usage on the Raspberry Pi 5
+      EXECUTIONS_DATA_SAVE_ON_SUCCESS: none
       EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS: true
       N8N_LOG_LEVEL: info
     ports:
