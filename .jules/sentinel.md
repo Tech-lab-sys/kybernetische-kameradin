@@ -1,0 +1,4 @@
+## 2026-06-13 - n8n External Port Exposure and Data Logging
+**Vulnerability:** The n8n docker-compose service was directly exposing port 5678 to all interfaces (0.0.0.0) instead of forcing traffic through the Cloudflare tunnel, and it was configured to log all successful execution data (`EXECUTIONS_DATA_SAVE_ON_SUCCESS: all`), potentially saving sensitive PII or credentials.
+**Learning:** Container configurations often default to public port mappings, bypassing intended ingress security mechanisms like tunnels. Additionally, default data logging policies may inadvertently store sensitive data at rest in the database.
+**Prevention:** Always bind exposed ports to `127.0.0.1` (`127.0.0.1:port:port`) when a reverse proxy or tunnel is intended to handle external traffic. Configure execution data retention to `none` (`EXECUTIONS_DATA_SAVE_ON_SUCCESS: none`) to prevent unintentional storage of sensitive workflow data.
