@@ -1,0 +1,4 @@
+## 2024-05-18 - Docker Compose Port Binding & Data Logging
+**Vulnerability:** The `n8n` service in `docker-compose.yml` was bound to `0.0.0.0` (all interfaces) via `- "5678:5678"`, and `EXECUTIONS_DATA_SAVE_ON_SUCCESS` was set to `all`. This exposed the service externally by bypassing the intended Cloudflare Tunnel and logged sensitive execution data like PII and secrets to the database.
+**Learning:** Container services should be explicitly bound to localhost (`127.0.0.1`) if they are meant to be accessed only via a reverse proxy or tunnel. Execution logging should be minimized, especially on edge devices like the Raspberry Pi 5, to protect sensitive data and improve database performance.
+**Prevention:** Always bind container ports to `127.0.0.1` unless external access is required. Disable execution data saving on success to prevent unintentional logging of sensitive information.
