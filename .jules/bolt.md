@@ -1,0 +1,3 @@
+## 2024-05-24 - Disable n8n Execution Data Save on Success
+**Learning:** Saving execution data for successful n8n runs causes significant and unnecessary PostgreSQL database I/O and disk usage, acting as a major performance bottleneck on a Raspberry Pi 5.
+**Action:** Set `EXECUTIONS_DATA_SAVE_ON_SUCCESS: none` in the `docker-compose.yml` for n8n to optimize performance by minimizing database operations for routine, successful tasks.
