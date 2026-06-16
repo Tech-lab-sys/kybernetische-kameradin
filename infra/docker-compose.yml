@@ -52,7 +52,8 @@ services:
       
       # Execution & Logging
       EXECUTIONS_DATA_SAVE_ON_ERROR: all
-      EXECUTIONS_DATA_SAVE_ON_SUCCESS: all
+      # ⚡ Bolt: Disable execution data saving on success to reduce DB I/O on Raspberry Pi 5
+      EXECUTIONS_DATA_SAVE_ON_SUCCESS: none
       EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS: true
       N8N_LOG_LEVEL: info
     ports:
