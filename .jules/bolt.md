@@ -1,0 +1,3 @@
+## 2026-06-17 - Disable n8n Successful Execution Data Saving
+**Learning:** Saving successful workflow executions in n8n (`EXECUTIONS_DATA_SAVE_ON_SUCCESS: all`) generates significant and continuous write operations (I/O) to the PostgreSQL database. On edge devices like a Raspberry Pi 5 running off an SD card, this constant write cycle creates a major performance bottleneck and aggressively degrades the SD card's lifespan, even though the data itself is rarely needed for debugging successful runs.
+**Action:** Always set `EXECUTIONS_DATA_SAVE_ON_SUCCESS: none` in n8n edge deployments (like the `infra/docker-compose.yml`) to drastically reduce unnecessary DB I/O, preserve disk health, and optimize overall system performance.
