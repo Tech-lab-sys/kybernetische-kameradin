@@ -1,0 +1,4 @@
+## 2024-06-19 - Ensure Services Are Bound to Localhost When Using a Tunnel
+**Vulnerability:** The n8n service was bound to `0.0.0.0:5678` (by using `"5678:5678"` in docker-compose.yml), which meant the service was accessible on port 5678 on all network interfaces.
+**Learning:** Even though a Cloudflare tunnel is set up to provide secure remote access, binding ports to all interfaces can accidentally expose the service directly to the public internet if the host machine has a public IP address and the firewall does not block it. This bypasses the tunnel's security measures.
+**Prevention:** Always bind exposed ports to localhost (e.g., `"127.0.0.1:5678:5678"`) in `docker-compose.yml` if the service is meant to be accessed exclusively via a secure tunnel or reverse proxy running on the same machine.
