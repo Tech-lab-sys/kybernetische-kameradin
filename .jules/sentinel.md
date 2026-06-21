@@ -1,0 +1,4 @@
+## 2024-05-24 - Unrestricted Docker Port Binding
+**Vulnerability:** The n8n service in `docker-compose.yml` was bound to `0.0.0.0:5678` (implied by `"5678:5678"`). This exposes the n8n interface directly to the local network or internet, bypassing the intended Cloudflare Tunnel security layer.
+**Learning:** Docker modifies iptables to expose ports by default, ignoring host firewall rules in many cases. When using a reverse proxy or tunnel (like Cloudflared) for secure access, container ports must be explicitly bound to localhost.
+**Prevention:** Always use `127.0.0.1:PORT:PORT` in `docker-compose.yml` when services are intended to be accessed exclusively via a proxy/tunnel on the same host, preventing direct external access.
