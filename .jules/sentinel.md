@@ -1,0 +1,4 @@
+## 2024-05-23 - [Port Exposure Bypass via Docker Compose]
+**Vulnerability:** Port 5678 of the n8n container was bound to all interfaces ("0.0.0.0") via the "5678:5678" docker-compose configuration. This allowed direct external access to the n8n instance, bypassing the intended Cloudflare Tunnel security layer.
+**Learning:** Default docker-compose port mappings (e.g., "port:port") implicitly bind to 0.0.0.0. When using a reverse proxy or tunnel (like Cloudflared) for secure external access, exposing ports on all interfaces defeats the purpose of the tunnel and opens the service to direct attacks or unauthorized access.
+**Prevention:** Always explicitly bind container ports to localhost ("127.0.0.1:port:port") in docker-compose.yml when external access is intended to be routed exclusively through a local tunnel or reverse proxy.
