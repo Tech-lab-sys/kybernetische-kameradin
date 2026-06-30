@@ -1,0 +1,4 @@
+## 2024-06-30 - [Docker Port Binding Exposure]
+**Vulnerability:** n8n port 5678 was bound to 0.0.0.0 (default), exposing the service directly to the host's network and bypassing the intended Cloudflared tunnel security layer.
+**Learning:** Default Docker port bindings (e.g., "5678:5678") bind to all network interfaces. In an architecture relying on an external tunnel for access and security, this allows direct local network or external access if host firewall rules are permissive.
+**Prevention:** Always bind container ports to localhost (e.g., "127.0.0.1:5678:5678") when access should only be routed through a local reverse proxy or tunnel like cloudflared.
