@@ -1,0 +1,4 @@
+## 2026-07-03 - Docker Compose Port Binding and Execution Data Logging Exposure
+**Vulnerability:** Docker container port 5678 was exposed to all network interfaces (`0.0.0.0`) bypassing the Cloudflare tunnel, and `EXECUTIONS_DATA_SAVE_ON_SUCCESS` was set to `all`, leaking sensitive execution data like PII and secrets to the PostgreSQL database.
+**Learning:** In local environments utilizing Cloudflare tunnels for external access, ports must be strictly bound to localhost to prevent direct external access. Additionally, saving all execution data indiscriminately leads to severe data privacy risks.
+**Prevention:** Always bind exposed ports to `127.0.0.1` (e.g., `127.0.0.1:5678:5678`) in docker-compose and disable successful execution data saving (`EXECUTIONS_DATA_SAVE_ON_SUCCESS: none`) when PII or secrets might be processed.
