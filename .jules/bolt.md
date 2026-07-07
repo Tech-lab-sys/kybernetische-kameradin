@@ -1,0 +1,3 @@
+## 2024-05-30 - Optimize n8n execution data saving
+**Learning:** Saving execution data for successful runs in n8n causes excessive PostgreSQL database I/O and disk usage, creating a significant performance bottleneck on edge hardware like the Raspberry Pi 5.
+**Action:** Always set `EXECUTIONS_DATA_SAVE_ON_SUCCESS: none` in docker-compose.yml to minimize I/O overhead and preserve storage performance on edge devices.
